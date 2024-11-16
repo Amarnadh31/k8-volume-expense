@@ -26,6 +26,9 @@ output "database_routable_id" {
     value = module.vpc.database_route_id
 }
 
+output "database_group_name" {
+    value = module.vpc.database_group_name
+}
 
 
 

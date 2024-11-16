@@ -1,5 +1,5 @@
 terraform {
-    required_providers {
+    required_providers{
         aws = {
             source = "hashicorp/aws"
             version = "~> 5.6"
@@ -7,11 +7,14 @@ terraform {
     }
 
     backend "s3" {
-
-
-}
+        bucket = "demo-bucket-31"
+        key = "workshop"
+        region = "us-east-1"
+        dynamodb_table = "demo_key"
+    }
 }
 
 provider "aws" {
     region = "us-east-1"
+
 }
