@@ -6,7 +6,7 @@ metadata:
   labels:
     project: expense
 data:
-  DB_HOST: "mysql"
+  DB_HOST: "expense-mysql"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -16,7 +16,7 @@ metadata:
   labels:
     project: expense
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       project: expense
