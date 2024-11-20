@@ -42,9 +42,6 @@ kind: StatefulSet
 metadata:
   name: mysql-stateful
   namespace: expense
-  labels:
-    project: expense
-    env: dev
 spec:
   replicas: 2
   serviceName: "expense-headless"
@@ -74,4 +71,4 @@ spec:
       storageClassName: "ebs-sc"
       resources:
         requests:
-          capacity: 5Gi
+          storage: 5Gi
