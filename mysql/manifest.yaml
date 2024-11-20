@@ -72,7 +72,7 @@ spec:
     spec:
       accessModes:
       - ReadWriteOnce
-      storageClassName: ebs-sc
+      storageClassName: "ebs-sc"
       resources:
         requests:
           capacity: 5Gi
