@@ -6,7 +6,7 @@ metadata:
   labels:
     project: expense
 data:
-  DB_HOST: "expense-mysql"
+  DB_HOST: expense-mysql
 ---
 apiVersion: apps/v1
 kind: Deployment
