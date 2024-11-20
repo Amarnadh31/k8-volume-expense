@@ -70,8 +70,7 @@ spec:
   - metadata:
       name: mysql-pvc
     spec:
-      accessModes:
-      - ReadWriteOnce
+      accessModes: ["ReadWriteOnce"]
       storageClassName: "ebs-sc"
       resources:
         requests:
