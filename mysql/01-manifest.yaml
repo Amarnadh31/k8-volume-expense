@@ -45,6 +45,7 @@ spec:
         - |
           if [[ "$(hostname)" == "mysql-0" ]]; then
             echo "Initializing Primary Database"
+            mkdir -p /etc/mysql/conf.d
             cp /config/primary.cnf /etc/mysql/conf.d/custom.cnf
           else
             echo "Initializing Replica Database"
