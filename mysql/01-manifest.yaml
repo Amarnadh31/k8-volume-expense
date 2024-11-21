@@ -19,6 +19,9 @@ data:
     relay-log=mysql-relay-bin
     log-bin=mysql-bin
     read-only=1
+  custom.cnf: |
+    [mysqld]
+    server-id = ${SERVER_ID}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -54,6 +57,18 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /config
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        env:
+          - name: SERVER_ID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+        volumeMounts:
+          - name: config-volume
+            mountPath: /etc/mysql/conf.d
+            subPath: custom.cnf
       containers:
       - name: mysql
         image: mysql:8.0
