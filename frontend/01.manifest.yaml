@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: amarnadh31/frontend:v5
+        image: amarnadh31/frontend:v6
 ---
 kind: Service
 apiVersion: v1
