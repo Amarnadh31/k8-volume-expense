@@ -22,6 +22,9 @@ data:
   template.cnf: |
     [mysqld]
     server-id = ${SERVER_ID}
+  my_custom.cnf: |
+    [mysqld]
+    !include /etc/my_custom_conf.d/*.cnf
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -77,6 +80,8 @@ spec:
           items:
             - key: template.cnf
               path: template.cnf
+      - name: custom-config-volume
+        emptyDir: {} 
   volumeClaimTemplates:
       - metadata:
           name: mysql-pvc
