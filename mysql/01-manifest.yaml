@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mysql-config
-  namespace: database
+  namespace: expense
 data:
   primary.cnf: |
     [mysqld]
@@ -24,7 +24,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql
-  namespace: database
+  namespace: expense
 spec:
   serviceName: "mysql-service"
   replicas: 3
@@ -92,7 +92,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mysql-service
-  namespace: database
+  namespace: expense
 spec:
   ports:
   - port: 3306
@@ -105,7 +105,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: expense-mysql
-  namespace: database
+  namespace: expense
 spec:
   selector:
     app: mysql
