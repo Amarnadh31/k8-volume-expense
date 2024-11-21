@@ -39,23 +39,23 @@ spec:
         app: mysql
     spec:
       initContainers:
-        - name: init-config
-          image: busybox
-          command:
-            - sh
-            - -c
-            - |
-              # Substitute the environment variable in the config file using envsubst
-              envsubst < /etc/mysql/template.cnf > /etc/mysql/conf.d/custom.cnf
-          env:
-            - name: SERVER_ID
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-          volumeMounts:
-            - name: config-volume
-              mountPath: /etc/mysql
-              subPath: template.cnf
+      - name: init-config
+        image: busybox
+        command:
+          - sh
+          - -c
+          - |
+            echo "Substituting SERVER_ID..."
+            envsubst < /etc/mysql/template.cnf > /etc/mysql/conf.d/custom.cnf
+            cat /etc/mysql/conf.d/custom.cnf  # Debugging step to check if substitution works
+        env:
+          - name: SERVER_ID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+        volumeMounts:
+          - name: config-volume
+            mountPath: /etc/mysql
       containers:
         - name: mysql
           image: mysql:8.0
@@ -67,9 +67,12 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               value: "Amarapp@1"
       volumes:
-        - name: config-volume
-          configMap:
-            name: mysql-config
+      - name: config-volume
+        configMap:
+          name: mysql-config
+          items:
+            - key: template.cnf
+              path: template.cnf
   volumeClaimTemplates:
       - metadata:
           name: mysql-pvc
