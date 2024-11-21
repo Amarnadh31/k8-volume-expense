@@ -49,6 +49,7 @@ spec:
           else
             echo "Initializing Replica Database"
             cp /config/replica.cnf /etc/mysql/conf.d/custom.cnf
+          fi
         volumeMounts:
         - name: config-volume
           mountPath: /config
