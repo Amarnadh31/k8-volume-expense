@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: database
+data:
+  primary.cnf: |
+    [mysqld]
+    server-id=1
+    log-bin=mysql-bin
+    binlog-do-db=transactions
+    enforce-gtid-consistency=true
+    gtid-mode=ON
+    log-slave-updates=true
+    replicate-same-server-id=0
+  replica.cnf: |
+    [mysqld]
+    server-id={{ .pod.index }}
+    relay-log=mysql-relay-bin
+    log-bin=mysql-bin
+    read-only=1
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: database
+spec:
+  serviceName: "mysql-service"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      initContainers:
+      - name: init-mysql
+        image: busybox:1.28
+        command:
+        - sh
+        - -c
+        - |
+          if [[ "$(hostname)" == "mysql-0" ]]; then
+            echo "Initializing Primary Database"
+            cp /config/primary.cnf /etc/mysql/conf.d/custom.cnf
+          else
+            echo "Initializing Replica Database"
+            cp /config/replica.cnf /etc/mysql/conf.d/custom.cnf
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+          name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: Amarapp@1
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+        - name: config-volume
+          mountPath: /etc/mysql/conf.d
+        readinessProbe:
+          exec:
+            command:
+            - mysqladmin
+            - ping
+            - -h
+            - localhost
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: config-volume
+        configMap:
+          name: mysql-config
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: database
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  clusterIP: None
+  selector:
+    app: mysql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: expense-mysql
+  namespace: database
+spec:
+  selector:
+    app: mysql
+  ports:
+  - name: mysql-port
+    protocol: TCP
+    port: 3306
+    targetPort: 3306
