@@ -86,6 +86,7 @@ spec:
   volumeClaimTemplates:
       - metadata:
           name: mysql-pvc
+          namespace: expense
         spec:
           accessModes: ["ReadWriteOnce"]
           storageClassName: "ebs-sc"
